@@ -1,0 +1,15 @@
+# Data Manipulation & Analysis
+numpy
+pandas
+joblib
+
+# Machine Learning & Deep Learning
+torch
+optuna
+
+# Visualization
+matplotlib
+seaborn
+
+# Database (for Optuna storage)
+sqlalchemy
