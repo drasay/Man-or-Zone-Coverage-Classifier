@@ -17,18 +17,29 @@ Defensive coverage identification is a cornerstone of modern football analytics.
 * **Transformer:** The top performer with a **test accuracy of 0.8438**. It achieved a **peak pre-snap accuracy of 0.9365**, demonstrating the power of the self-attention mechanism in capturing player-to-player relationships.
 * **Multi-Layer Perceptron (MLP):** A robust baseline that pools player features for a global classification.
 * **Neural Additive Model (NAM):** An interpretable architecture that evaluates the contribution of individual features (like velocity or positioning) independently.
-
+![Transformer Accuracy Results](transformer_accuracy.png)
 ---
 
 ## Repository Structure
 
-| File | Description |
-| :--- | :--- |
-| `bdb_cleaning_functions_01.py` | Core preprocessing: coordinate rotation, left-to-right normalization, and velocity component calculation. |
-| `bdb_dataloading_02.py` | Data ingestion, snap-alignment, and Gaussian-weighted **data augmentation**. |
-| `bdb_training_..._03.py` | Training scripts featuring **Bayesian Optimization** via Optuna for hyperparameter tuning. |
-| `bdb_preds_..._04.py` | Inference scripts that load the optimized model weights and generate test set predictions. |
-| `bdb_evaluation_..._05.py` | Visualization scripts to analyze accuracy relative to the ball snap ($T=0$). |
+### 1. Data Core (Shared)
+* `bdb_cleaning_functions_01.py`: Core preprocessing: coordinate rotation, left-to-right normalization, and velocity calculation.
+* `bdb_dataloading_02.py`: Data ingestion, snap-alignment, and Gaussian-weighted **data augmentation**.
+
+### 2. Multi-Layer Perceptron (MLP) Track
+* `bdb_training_mlp_03.py`: Training script with **Bayesian Optimization** (Optuna) for MLP hyperparameters.
+* `bdb_preds_mlp_04.py`: Inference script for generating MLP test set predictions.
+* `bdb_evaluation_mlp_05.py`: Visualization and accuracy-over-time analysis for the MLP model.
+
+### 3. Neural Additive Model (NAM) Track
+* `bdb_training_nam_03.py`: Training script with **Bayesian Optimization** (Optuna) for NAM hyperparameters.
+* `bdb_preds_nam_04.py`: Inference script for generating NAM test set predictions.
+* `bdb_evaluation_nam_05.py`: Visualization and accuracy-over-time analysis for the NAM model.
+
+### 4. Transformer Track
+* `bdb_training_transformers_03.py`: Training script for the Transformer model.
+* `bdb_preds_transformer_04.py`: Inference script for generating Transformer test set predictions.
+* `bdb_evaluation_transformer_05.py`: Visualization and accuracy-over-time analysis for the Transformer model.
 
 ---
 
@@ -53,10 +64,19 @@ The project evaluates accuracy across the "life" of a play. Results indicate tha
 * Python 3.8+
 * PyTorch
 * CUDA (optional, for GPU acceleration)
-
+  
+## Requirements
+> **Note:** Use the provided `requirements.txt` to set up your environment. Ensure you have `torch`, `optuna`, `pandas`, `numpy`, and `matplotlib` installed.
 
 ### Workflow
-1.  **Prepare Data:** Run `bdb_dataloading_02.py` to generate `.pt` tensors from the Kaggle CSV files.
-2.  **Optimize & Train:** Execute the `bdb_training_..._03.py` scripts. This will use **Bayesian Optimization** to find the best hyperparameters.
-3.  **Generate Predictions:** Run `bdb_preds_..._04.py` to produce a CSV of results.
-4.  **Evaluate:** Use the `bdb_evaluation_..._05.py` scripts to generate performance visualizations.
+### 1. Initialization
+Run `bdb_dataloading_02.py` to process the Kaggle Big Data Bowl CSVs. This generates the `.pt` tensor files required for training and testing.
+
+### 2. Parallel Training Tracks
+Choose an architecture and run its respective `_03.py` script (e.g., `bdb_training_mlp_03.py`). This triggers **Optuna** to find optimized parameters like `hidden_dim`, `num_layers`, and `learning_rate`.
+
+### 3. Prediction & Inference
+Once the best model `.pth` file is saved, run the corresponding `_04.py` script to generate a CSV of predictions (e.g., `week_1_preds_transformer.csv`).
+
+### 4. Evaluation
+Run the `_05.py` scripts to generate "Accuracy by Frame" visualizations, allowing you to see exactly when the model is most confident during the pre-snap and post-snap phases.
